@@ -1,6 +1,6 @@
 from pydantic import BaseModel,EmailStr,create_model,Field
 from datetime import datetime
-from typing import Optional,Dict,List
+from typing import Optional,Dict,List, Any
 from pydantic.types import conint
 from . import models
 
@@ -168,6 +168,14 @@ class VerifyResetTokenRequestByLink(BaseModel):
 class Token (BaseModel):
     user: UserBase
     access_token: Dict[str, str]
+
+    class Config:
+        orm_mode = True
+
+class Response(BaseModel):
+    status: int
+    message: str
+    data: Dict[str, Any] 
 
     class Config:
         orm_mode = True

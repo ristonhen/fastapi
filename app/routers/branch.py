@@ -34,7 +34,6 @@ def get_branch(id: int ,db: Session = Depends(get_db),
 def get_all_branches(db: Session = Depends(get_db),
                   current_user: int = Depends(oauth2.get_current_user)):
     
-    
     branches = db.query(models.UspBranch).all()
     if not branches:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Branch {id} not found")

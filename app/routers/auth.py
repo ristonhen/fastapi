@@ -41,22 +41,19 @@ router = APIRouter(
 #     # return {"access_token": access_token, "token_type": "bearer"}
 #     return {"status":"successed"}
 
-@router.post("/login",response_model=schemas.Token)
+@router.post("/login",response_model=schemas.Response)
 def login(user_credentail: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
-    user = db.query(models.User).filter(models.User.email == user_credentail.username).first()
-
-    if user.status == False:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="User Inactive")
+    user = db.query(models.User).filter(models.User.email == user_credentail.username, models.User.status != False).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-                            detail=f"Invalid Credentails (Username)")
+        response = schemas.Response(status=status.HTTP_403_FORBIDDEN, message= "Inactive user please contect to your manager", data={})
+        return response
     if not utils.verify(user_credentail.password , user.password):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-                            detail=f"Invalid Credentails (Password)")
+        response = schemas.Response(status=status.HTTP_403_FORBIDDEN, message= "Invalid username and password",data={})
+        return response
     
     access_token = oauth2.create_access_token(data={"user_id": user.id})
-    
-    return {"access_token": access_token,"user": user}
+    response = schemas.Response(status=status.HTTP_200_OK, message= "tesing",data={"access_token": access_token,"user": user})
+    return response
 
 # @router.put("/changepwd")
 # def change_password(user_credentail: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db),
@@ -70,6 +67,7 @@ def login(user_credentail: OAuth2PasswordRequestForm = Depends(), db: Session = 
 #     # db.commit()
 #     print(user_credentail.newpasswd)
 #     return {"status": "Password changed successfully"}
+
 
 @router.put("/changepwd")
 def change_password(user_credentail: schemas.ChangePasswordRequest,
@@ -87,7 +85,7 @@ def change_password(user_credentail: schemas.ChangePasswordRequest,
     return {"message": "Password changed successfully","status":True}
 
 @router.post("/resetpwd")
-def reset_password(request: schemas.ResetPasswordRequest, db: Session = Depends(database.get_db)):
+def sent_token_reset_password(request: schemas.ResetPasswordRequest, db: Session = Depends(database.get_db)):
     
     user = db.query(models.User).filter(models.User.email == request.email).first()
     if not user:

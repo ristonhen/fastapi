@@ -21,7 +21,7 @@ def create_access_token(data: dict):
 
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY,algorithm=ALGORITHM)
 
-    return {"token":encoded_jwt, "expire":"123", "token_type": "bearer"}
+    return {"token":encoded_jwt, "token_type": "bearer"}
 
 def verify_access_token(token: str, credentails_exeption):
 

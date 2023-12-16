@@ -10,7 +10,6 @@ from typing import List,Optional, Union
 from datetime import datetime
 # from .schemas import create_dynamic_model
 
-
 #  auto generate table to DB
 models.Base.metadata.create_all(bind=engine)
 
@@ -39,37 +38,15 @@ app.include_router(branch.router)
 app.include_router(role.router)
 app.include_router(configuration.router)
 
-
-# Test dynamic create field
-def create_dynamic_model(fields: List[Union[str, dict]]) -> BaseModel:
-    field_definitions = {}
-    for field in fields:
-        if isinstance(field, str):
-            field_definitions[field] = (str, ...)
-        elif isinstance(field, dict):
-            field_name = field['name']
-            field_type = field['type']
-            field_definitions[field_name] = (field_type, ...)
-    
-    DynamicModel = create_model('DynamicModel', **field_definitions)
-    return DynamicModel
-
 @app.get("/")
 def read_root():
-    dynamic_fields = [
-        'name',
-        'age',
-        {'name': 'birth_date', 'type': Optional[datetime]}
-    ]
-    DynamicModel = create_dynamic_model(dynamic_fields)
     data = {
         'name': 'Alice',
         'age': 25,
         'birth_date': datetime.now()  # Assign a datetime value
     }
-    dynamic_instance = DynamicModel(**data)
     # Access the dynamically generated fields
-    return dynamic_instance
+    return data
 
 
 if __name__ == "__main__":

@@ -73,7 +73,7 @@ def send_reviewaml_email(subject: str,email_to: List[str], pdfimage: str, cc_ema
     smtp_server = 'mail.canadiabank.com'
     smtp_port = 587
     login_email = 'risto.nhen@canadiabank.com.kh'
-    login_password = 'Cana!@#123'
+    login_password = 'Cana!@#$1234'
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
@@ -82,8 +82,6 @@ def send_reviewaml_email(subject: str,email_to: List[str], pdfimage: str, cc_ema
         print('Password reset email sent to {email_to} successfully!')
     except Exception as e:
         print('An error occurred while sending the password reset email:', str(e))
-
-
         
 def send_reset_email(email: str, reset_token: str):
     
@@ -128,7 +126,7 @@ def send_reset_email(email: str, reset_token: str):
     smtp_server = 'mail.canadiabank.com'
     smtp_port = 587
     login_email = 'risto.nhen@canadiabank.com.kh'
-    login_password = 'Cana!@#123'
+    login_password = 'Cana!@#$1234'
 
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:
