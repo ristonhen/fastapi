@@ -1,14 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from . import models ,schemas
+from . import models
 from app.routers.router import router
 from .database import engine
 from .routers import post, user,auth , vote, menu, index, branch,role,configuration
 from pydantic import BaseModel, create_model
 from typing import List,Optional, Union
 from datetime import datetime
-# from .schemas import create_dynamic_model
+
+from app.sockets import sio_app
 
 #  auto generate table to DB
 models.Base.metadata.create_all(bind=engine)
@@ -37,18 +38,13 @@ app.include_router(index.router)
 app.include_router(branch.router)
 app.include_router(role.router)
 app.include_router(configuration.router)
-
+app.mount('/api', app=sio_app)
+# app.add_websocket_route('/sockets',sio_app)
 @app.get("/")
 def read_root():
-    data = {
-        'name': 'Alice',
-        'age': 25,
-        'birth_date': datetime.now()  # Assign a datetime value
-    }
-    # Access the dynamically generated fields
-    return data
+    return {'message': 'Hello👋 Developers💻'}
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
