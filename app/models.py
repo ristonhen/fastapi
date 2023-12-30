@@ -36,24 +36,25 @@ class UspBranch(Base):
     tvticketip = Column(JSONB)
     company_id = Column(Integer, ForeignKey("companys.id",ondelete="CASCADE",onupdate="CASCADE"),nullable=False,)
 # --------------------------------
-def generate_pydantic_model(sa_model, required_fields: List[str] = [], optional_fields: List[str] = []):
-    fields = {}
-    for column in sa_model.__table__.columns:
-        field_type = column.type.python_type
-        field_name = column.name
-        if field_name in required_fields:
-            fields[field_name] = (field_type, ...)
-        elif field_name in optional_fields:
-            fields[field_name] = (Optional[field_type], ...)
-        else:
-            fields[field_name] = (Optional[field_type], None)  # assuming all other fields are optional
-    bases = (BaseModel,)
-    return type(sa_model.__name__ + "Model", bases, fields)
+# def generate_pydantic_model(sa_model, required_fields: List[str] = [], optional_fields: List[str] = []):
+#     fields = {}
+#     for column in sa_model.__table__.columns:
+#         field_type = column.type.python_type
+#         field_name = column.name
+#         if field_name in required_fields:
+#             fields[field_name] = (field_type, ...)
+#         elif field_name in optional_fields:
+#             fields[field_name] = (Optional[field_type], ...)
+#         else:
+#             fields[field_name] = (Optional[field_type], None)  # assuming all other fields are optional
+#     bases = (BaseModel,)
+#     return type(sa_model.__name__ + "Model", bases, fields)
 
-required_fields = ['company_name', 'company_code', 'opening_date']
-optional_fields = ['created_by', 'modified_by']
+# required_fields = ['company_name', 'company_code', 'opening_date']
+# optional_fields = ['created_by', 'modified_by']
 
-CompanyModel = generate_pydantic_model(Company, required_fields, optional_fields)
+# CompanyModel = generate_pydantic_model(Company, required_fields, optional_fields)
+
 # print(type(CompanyModel))
 # --------------------------------
 class UspConfiguration(Base):
@@ -112,10 +113,10 @@ class User(Base):
     branch = relationship("UspBranch")
     role = relationship("UspRole")
 
-field_definitions = {}
+# field_definitions = {}
 
-for column in User.__table__.columns:
-    field_definitions[column.name] = (Optional[column.type.python_type], ...)
+# for column in User.__table__.columns:
+#     field_definitions[column.name] = (Optional[column.type.python_type], ...)
     # field_definitions[column.name] = (Optional[int], ...)
 
 # print(field_definitions)
@@ -178,5 +179,36 @@ class Post(Base):
     owner_id  = Column(Integer, ForeignKey("users.id",ondelete="CASCADE"),nullable=False)
     owner = relationship("User")
 
+# For Message
+class Conversation(Base):
+    __tablename__ = 'conversations'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    name = Column(String)
+    type = Column(String)
+    creation_timestamp = Column(TIMESTAMP(timezone=True))
+    last_updated_timestamp = Column(TIMESTAMP(timezone=True))
+    archived = Column(Boolean)
+    muted = Column(Boolean)
+    unread_messages_count = Column(Integer)
+    visibility = Column(String)
+    image_url = Column(String)
+    description = Column(String)
+    tags = Column(String)
+    participants_limit = Column(Integer)
+    moderators = Column(String)
+    additional_settings = Column(JSONB)
+    # messages = relationship("Message")
+
+class Message(Base):
+    __tablename__ = 'messages'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    conversation_id = Column(Integer, ForeignKey('conversations.id', ondelete="CASCADE",onupdate="CASCADE"), nullable=False)
+    sender_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    content = Column(Text)
+    timestamp = Column(TIMESTAMP(timezone=True), server_default= text('now()'))
+    conversation = relationship("Conversation")
+    sender = relationship("User")
 
 
