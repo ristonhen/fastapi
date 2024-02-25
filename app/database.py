@@ -5,39 +5,11 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from .config import settings
-# SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:123@localhost/fastapi'
+SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:123@localhost/fastapi'
 
-SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}'
+# SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}'
 engine =create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# def switch_database_backend(database_backend):
-#     global engine, SessionLocal
-
-#     if database_backend == "oracle":
-#         # Configure Oracle backend
-#         # Set the appropriate connection string for Oracle
-#         SQLALCHEMY_DATABASE_URL = "oracle://user:password@hostname:port/service_name"
-#         engine = create_engine(SQLALCHEMY_DATABASE_URL)
-#     elif database_backend == "mysql":
-#         # Configure MySQL backend
-#         SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}'
-#         engine = create_engine(SQLALCHEMY_DATABASE_URL)
-#     elif database_backend == "postgres":
-#         # Configure PostgreSQL backend
-#         SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}'
-#         engine = create_engine(SQLALCHEMY_DATABASE_URL)
-#     else:
-#         raise ValueError("Invalid database backend specified.")
-
-#     # Create the session factory
-#     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# # Set the default database to PostgreSQL
-# default_database_backend = "postgres"
-# switch_database_backend(default_database_backend)
-
-
-
 
 Base = declarative_base()
 

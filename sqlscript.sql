@@ -1,15 +1,23 @@
+-- drop table usp_role;
+-- drop table usp_rule_npms_assign;						
+-- drop table votes;
+-- drop table posts;
+-- drop table menu_permission;
+-- drop table users;
+-- drop table usp_branchs;
+
 INSERT INTO public.companys (
-	company_name, company_code, created_by)
+    company_name, company_code, created_by, opening_date)
 VALUES
-	('Company 1', 'COMP1', 'User1'),
-    ('Company 2', 'COMP2', 'User2'),
-    ('Company 3', 'COMP3', 'User3'),
-    ('Company 4', 'COMP4', 'User4'),
-    ('Company 5', 'COMP5', 'User5'),
-    ('Company 6', 'COMP6', 'User6'),
-    ('Company 7', 'COMP7', 'User7'),
-    ('Company 8', 'COMP8', 'User8'),
-    ('Company 9', 'COMP9', 'User9');
+    ('Company 1', 'COMP1', 'User1', '2024-02-25'),  -- Replace '2022-02-25' with the actual date
+    ('Company 2', 'COMP2', 'User2', '2024-02-25'),
+    ('Company 3', 'COMP3', 'User3', '2024-02-25'),
+    ('Company 4', 'COMP4', 'User4', '2024-02-25'),
+    ('Company 5', 'COMP5', 'User5', '2024-02-25'),
+    ('Company 6', 'COMP6', 'User6', '2024-02-25'),
+    ('Company 7', 'COMP7', 'User7', '2024-02-25'),
+    ('Company 8', 'COMP8', 'User8', '2024-02-25'),
+    ('Company 9', 'COMP9', 'User9', '2024-02-25');
 
 INSERT INTO public.usp_branchs (
     branch_code, branch_name, opening_date, range_ip, created_date, created_by, modified_date, modified_by, tvticketip, company_id
@@ -58,13 +66,7 @@ VALUES
     ('Muon Theret', 'muountheret','muountheret@gmail.com', '$2y$10$EXqfcXx1558IpW9LCz5zM.vvrWQ.YRZapsKuhd.rw1oEuHpu8Gy3.', CURRENT_TIMESTAMP, NULL, 2, true, 1, NULL, CURRENT_TIMESTAMP, 'admin', NULL, NULL, NULL, NULL),
     ('Sihado Som', 	'sihadosom','sihadosom@gmail.com', '$2y$10$EXqfcXx1558IpW9LCz5zM.vvrWQ.YRZapsKuhd.rw1oEuHpu8Gy3.', CURRENT_TIMESTAMP, NULL, 1, true, 1, NULL, CURRENT_TIMESTAMP, 'admin', NULL, NULL, NULL, NULL);
    
-drop table usp_role;
-drop table usp_rule_npms_assign;						
-drop table votes;
-drop table posts;
-drop table menu_permission;
-drop table users;
-drop table usp_branchs;
+
 -- Insert data to table menu
 INSERT INTO menu_permission ("pms_menu_name","pms_menu_level","pms_parent_id","to_name","pms_menu_type","pms_menu_index","pms_menu_image","created_date","created_by","modified_date","modified_by","db_id")
 	VALUES	('Dashboard',1,NULL,'dashboard',1,1,'mdi-view-dashboard',current_timestamp,'admin',NULL,'admin',NULL            ),

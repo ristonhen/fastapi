@@ -158,60 +158,10 @@ async def getmenuassignedrole(db: Session = Depends(get_db),
 def listmenubylevel():
     return {"status":"get data successfully"}
 
-@router.get("/listmenubylevel")
-def listmenubylevel():
-    return {"status":"get data successfully"}
-
 @router.get("/assignmenutorole")
 def assignmenutorole():
     return {"status":"get data successfully"}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# data = [
-    #     schemas.MenuAssignedRoleOut(
-    #         pmsid=item.pmsid,
-    #         pms_menu_name=item.pms_menu_name,
-    #         pms_menu_level=item.pms_menu_level,
-    #         pms_parent_id=item.pms_parent_id,
-    #         pms_page_name=item.pms_page_name,
-    #         pms_menu_type=item.pms_menu_type,
-    #         pms_menu_index=item.pms_menu_index,
-    #         pms_menu_image=item.pms_menu_image,
-    #         created_date=item.created_date,
-    #         created_by=item.created_by,
-    #         modified_date=item.modified_date,
-    #         modified_by=item.modified_by,
-    #         db_id=item.db_id,
-    #         to_name=item.to_name,
-    #     )
-    #     for item in query_results
-    # ]
 
 
 

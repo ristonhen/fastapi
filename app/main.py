@@ -5,9 +5,8 @@ from . import models
 from app.routers.router import router
 from .database import engine
 from .routers import post, user,auth , vote, menu, index, branch,role,configuration
-from pydantic import BaseModel, create_model
-from typing import List,Optional, Union
-from datetime import datetime
+# from typing import List,Optional, Union
+# from datetime import datetime
 
 from app.sockets import sio_app
 
@@ -39,7 +38,7 @@ app.include_router(branch.router)
 app.include_router(role.router)
 app.include_router(configuration.router)
 app.mount('/api', app=sio_app)
-# app.add_websocket_route('/sockets',sio_app)
+
 @app.get("/")
 def read_root():
     return {'message': 'Hello👋 Developers💻'}

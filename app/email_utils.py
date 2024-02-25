@@ -1,6 +1,6 @@
 import os
 import smtplib
-import win32com.client
+# import win32com.client
 from typing import List
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage

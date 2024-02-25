@@ -7,7 +7,9 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 from typing import List, Optional
 from pydantic import BaseModel, Field
-from pydantic.fields import ModelField
+# from pydantic.fields import ModelField
+# from pydantic.main import ModelField
+
 
 class Company(Base):
     __tablename__ = 'companys'
@@ -112,7 +114,7 @@ class User(Base):
     reset_token_expiration = Column(TIMESTAMP(timezone=True))
     branch = relationship("UspBranch")
     role = relationship("UspRole")
-
+    
 # field_definitions = {}
 
 # for column in User.__table__.columns:

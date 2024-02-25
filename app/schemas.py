@@ -113,7 +113,7 @@ class UserBase(BaseModel):
     rolename: Optional[str]
     company_name: Optional[str]
     class Config:
-        orm_mode = True
+        from_attributes = True
 class UserOut(BaseModel):
     user: UserBase
     status: Optional[bool] = True
@@ -150,7 +150,7 @@ class ChangePasswordRequest(BaseModel):
     username: str
     currentassword: str
     newpassword: str
-    lastpasswordmodifieddate: Optional[datetime]
+    lastpasswordmodifieddate: Optional[datetime] = None
 
 class ResetPasswordRequest(BaseModel):
     email: str
@@ -170,7 +170,7 @@ class Token (BaseModel):
     access_token: Dict[str, str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Response(BaseModel):
     status: int
@@ -178,10 +178,11 @@ class Response(BaseModel):
     data: Dict[str, Any] 
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TokenData(BaseModel):
-    id: Optional[str] = None
+    # id: Optional[str] = None
+    id: str
     
 class PostCreate(PostBase):
     pass
@@ -207,14 +208,14 @@ class Post(PostBase):
     owner_id: int
     owner: UserBase
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PostOut(BaseModel):
     Post: Post
     votes: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Vote(BaseModel):
     post_id: int
