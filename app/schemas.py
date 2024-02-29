@@ -1,29 +1,34 @@
-from pydantic import BaseModel,EmailStr,create_model,Field
+from pydantic import BaseModel,EmailStr,create_model
+from sqlalchemy.ext.declarative import DeclarativeMeta
+
 from datetime import datetime
-from typing import Optional,Dict,List, Any
+from typing import Optional,Dict,List, Any,Type
 from pydantic.types import conint
 from . import models
 
 # Generate Pydantic model dynamically based on the SQLAlchemy model
-def generate_pydantic_model(sa_model):
-    fields = {}
-    for column in sa_model.__table__.columns:
-        if column.primary_key:
-            continue  # Skip the 'id' column
-        field_type = column.type.python_type
-        field_name = column.name
-        is_required = not column.nullable and column.default is None
+def generate_pydantic_model(sa_model: DeclarativeMeta) -> Type[BaseModel]:
+    # Create a dictionary to store the fields of the Pydantic model
+    fields = {
+        # Iterate over columns in the SQLAlchemy model
+        column.name: (
+            column.type.python_type,                           # Use the column's Python type
+            ...
+        )if not column.nullable or column.default is not None
+        else (
+            Optional[column.type.python_type],               # Make the field optional if it's nullable
+            ...
+        )
+        for column in sa_model.__table__.columns
+        if not column.primary_key                           # Skip primary key columns (e.g., 'id')
+    }
+    pydantic_model = create_model(sa_model.__name__ + "Model", **fields)    # Create the Pydantic model using create_model
+    return pydantic_model                                   # Return the dynamically generated Pydantic model
 
-        if is_required:
-            fields[field_name] = (field_type, ...)
-        elif not is_required:
-            fields[field_name] = (Optional[field_type], ...)
-        else:
-            fields[field_name] = (Optional[field_type], None)  # assuming all other fields are optional
-        fields[field_name] = (Optional[field_type], None)  # assuming all fields are optional
-    # pydantic_model = type(sa_model.__name__, (BaseModel,), fields)
-    pydantic_model = create_model(sa_model.__name__ + "Model", **fields)
-    return pydantic_model
+class Response(BaseModel):
+    status: int
+    message: str
+    data: Dict[str, Any] 
 
 class SentEmailReviewAml(BaseModel):
     branchname: str
@@ -172,11 +177,6 @@ class Token (BaseModel):
     class Config:
         from_attributes = True
 
-class Response(BaseModel):
-    status: int
-    message: str
-    data: Dict[str, Any] 
-
     class Config:
         from_attributes = True
 
@@ -219,7 +219,7 @@ class PostOut(BaseModel):
 
 class Vote(BaseModel):
     post_id: int
-    dir: conint(le=1)
+    dir: conint(le=1) # type: ignore
 
 # User 
 

@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 # from pydantic.fields import ModelField
 # from pydantic.main import ModelField
 
-
 class Company(Base):
     __tablename__ = 'companys'
 
@@ -212,5 +211,4 @@ class Message(Base):
     timestamp = Column(TIMESTAMP(timezone=True), server_default= text('now()'))
     conversation = relationship("Conversation")
     sender = relationship("User")
-
 
