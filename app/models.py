@@ -4,11 +4,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
 from sqlalchemy.dialects.postgresql import JSONB
-
 from typing import List, Optional
 from pydantic import BaseModel, Field
-# from pydantic.fields import ModelField
-# from pydantic.main import ModelField
 
 class Company(Base):
     __tablename__ = 'companys'
@@ -36,28 +33,7 @@ class UspBranch(Base):
     modified_by = Column(String)
     tvticketip = Column(JSONB)
     company_id = Column(Integer, ForeignKey("companys.id",ondelete="CASCADE",onupdate="CASCADE"),nullable=False,)
-# --------------------------------
-# def generate_pydantic_model(sa_model, required_fields: List[str] = [], optional_fields: List[str] = []):
-#     fields = {}
-#     for column in sa_model.__table__.columns:
-#         field_type = column.type.python_type
-#         field_name = column.name
-#         if field_name in required_fields:
-#             fields[field_name] = (field_type, ...)
-#         elif field_name in optional_fields:
-#             fields[field_name] = (Optional[field_type], ...)
-#         else:
-#             fields[field_name] = (Optional[field_type], None)  # assuming all other fields are optional
-#     bases = (BaseModel,)
-#     return type(sa_model.__name__ + "Model", bases, fields)
 
-# required_fields = ['company_name', 'company_code', 'opening_date']
-# optional_fields = ['created_by', 'modified_by']
-
-# CompanyModel = generate_pydantic_model(Company, required_fields, optional_fields)
-
-# print(type(CompanyModel))
-# --------------------------------
 class UspConfiguration(Base):
     __tablename__ = 'usp_configuration'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -72,7 +48,6 @@ class UspConfiguration(Base):
         UniqueConstraint('paramname', name='usp_configuration_paramname_key'),
     )
 
-# Model Role
 class UspRole(Base):
     __tablename__ = 'usp_role'
 
@@ -113,14 +88,6 @@ class User(Base):
     reset_token_expiration = Column(TIMESTAMP(timezone=True))
     branch = relationship("UspBranch")
     role = relationship("UspRole")
-    
-# field_definitions = {}
-
-# for column in User.__table__.columns:
-#     field_definitions[column.name] = (Optional[column.type.python_type], ...)
-    # field_definitions[column.name] = (Optional[int], ...)
-
-# print(field_definitions)
 
 class MenuPermission(Base):
     __tablename__ = 'menu_permission'
@@ -162,7 +129,6 @@ class UspRuleNpmsAssign(Base):
     modified_by = Column(String)
     role = relationship("UspRole")
     menu = relationship("MenuPermission")
-
 
 class Vote(Base):
     __tablename__ = "votes"

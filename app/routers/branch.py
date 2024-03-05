@@ -10,7 +10,7 @@ router = APIRouter(
     tags=['Branches']
 )
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def add_user(branch: schemas.BranchCreate, db: Session = Depends(get_db),
+def add_branch(branch: schemas.BranchCreate, db: Session = Depends(get_db),
              current_user: int = Depends(oauth2.get_current_user)):
     branch.created_by = current_user.username
     branch.created_date = datetime.now()

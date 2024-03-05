@@ -1,30 +1,35 @@
 from pydantic import BaseModel,EmailStr,create_model
 from sqlalchemy.ext.declarative import DeclarativeMeta
-
 from datetime import datetime
 from typing import Optional,Dict,List, Any,Type
 from pydantic.types import conint
-from . import models
 
 # Generate Pydantic model dynamically based on the SQLAlchemy model
-def generate_pydantic_model(sa_model: DeclarativeMeta) -> Type[BaseModel]:
-    # Create a dictionary to store the fields of the Pydantic model
-    fields = {
-        # Iterate over columns in the SQLAlchemy model
-        column.name: (
-            column.type.python_type,                           # Use the column's Python type
-            ...
-        )if not column.nullable or column.default is not None
-        else (
-            Optional[column.type.python_type],               # Make the field optional if it's nullable
-            ...
-        )
-        for column in sa_model.__table__.columns
-        if not column.primary_key                           # Skip primary key columns (e.g., 'id')
-    }
-    pydantic_model = create_model(sa_model.__name__ + "Model", **fields)    # Create the Pydantic model using create_model
-    return pydantic_model                                   # Return the dynamically generated Pydantic model
+def generate_pydantic_model(sa_model: DeclarativeMeta, for_insert: bool = False, 
+                            skip_fields: List[str] = None) -> Type[BaseModel]:
+    fields = {}
+    # If skip_fields is not provided, initialize it as an empty list
+    skip_fields = skip_fields or []
+    for column in sa_model.__table__.columns:
+        if column.primary_key:
+            continue  # Skip primary key columns (e.g., 'id')
 
+        field_type = column.type.python_type
+        # Skip any fields for updates
+        if not for_insert and column.name in skip_fields:
+            field_type = Optional[field_type]        
+        if not for_insert and (column.nullable or column.default is not None):
+            field_type = Optional[field_type]
+
+        # Set the default value to None for Request to update and columnn null with skip_fields
+        default_value = None if not for_insert and (column.nullable or column.name in skip_fields)  else ...
+        fields[column.name] = (field_type, default_value)
+    pydantic_model = create_model(sa_model.__name__ + "Model", **fields)
+    return pydantic_model   
+                            
+class HandlerDelete(BaseModel):
+    ids: List[int]
+    
 class Response(BaseModel):
     status: int
     message: str
@@ -40,9 +45,6 @@ class SentEmailReviewAmlList(BaseModel):
     email_data: List[SentEmailReviewAml]
 class DatabaseInfo(BaseModel):
     database_backend: str
-
-class HandlerDelete(BaseModel):
-    ids: List[int]
 
 class RoleBase(BaseModel):
     # roleid: int
