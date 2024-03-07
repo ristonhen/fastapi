@@ -36,6 +36,7 @@ class UspBranch(Base):
 
 class UspConfiguration(Base):
     __tablename__ = 'usp_configuration'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
     paramname = Column(String, nullable=False, unique=True)
     value = Column(String)
@@ -177,4 +178,18 @@ class Message(Base):
     timestamp = Column(TIMESTAMP(timezone=True), server_default= text('now()'))
     conversation = relationship("Conversation")
     sender = relationship("User")
+    
+class EmailData(Base):
+    __tablename__ = 'email_data'
+
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    branchname = Column(String, nullable=False, unique=True)
+    email_to = Column(JSONB, nullable=False)
+    cc_email = Column(JSONB, nullable=True)
+    pdfimage = Column(String, nullable=False)
+    queue_number = Column(String)
+    created_date = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))
+    created_by = Column(String, nullable=False)
+    modified_date = Column(TIMESTAMP(timezone=True))
+    modified_by = Column(String)
 

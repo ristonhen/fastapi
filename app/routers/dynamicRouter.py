@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from .. import models, schemas ,oauth2
 from ..database import get_db
 from typing import  List
+import json
 from datetime import datetime
 from ..schemas import generate_pydantic_model
 import logging
@@ -54,9 +55,10 @@ def create_handler(model_class):
         columns = model_class.__table__.columns.keys()
         # Create dictionaries with desired attributes dynamically
         json_data = [
-            {column: getattr(data, column) for column in columns}
-            for data in query
+            {column: getattr(data, column) for column in columns} for data in query
+            
         ]
+        
         response_data = schemas.Response(
             status=status.HTTP_200_OK,
             message=f"{len(json_data)} Record query successfully",
@@ -64,7 +66,7 @@ def create_handler(model_class):
         )
         return response_data
 
-    @router.post(f"/{endpoint}", tags=[class_name], response_model=schemas.Response)
+    @router.post(f"/{endpoint}", tags=[class_name], response_model=schemas.Response, status_code=status.HTTP_201_CREATED)
     async def post_handler(request_data: List[generate_pydantic_model(model_class)], db: Session = Depends(get_db), # type: ignore
                            current_user: int = Depends(oauth2.get_current_user)):
         response_data_list = []  # List to collect individual responses
@@ -83,9 +85,8 @@ def create_handler(model_class):
                 new_data_dict = {column: getattr(data, column) for column in data.__table__.columns.keys()}
                 response_data_list.append(new_data_dict)  
                               
-                
             response_data = schemas.Response(
-                status=status.HTTP_200_OK,
+                status=status.HTTP_201_CREATED,
                 message=f"{len(response_data_list)} Record created successfully",
                 data={endpoint: response_data_list}
             )
@@ -157,9 +158,7 @@ def create_handler(model_class):
         
         # Delete the branches from the database
         deleted_items = []
-        # not_found_roles = []
         all_ids_exist = True  # Flag to track if all IDs exist
-
         for id in ids.ids:
             item = next((r for r in existing if r.id == id), None)
             if item:
@@ -173,7 +172,6 @@ def create_handler(model_class):
             return {"status":status.HTTP_404_NOT_FOUND, "message":"One or more item not found"}
         
         db.commit()
-
         message = ""
         if deleted_items:
             message += f"{len(deleted_items)} Item deleted successfully."
