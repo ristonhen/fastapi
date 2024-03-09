@@ -192,4 +192,18 @@ class EmailData(Base):
     created_by = Column(String, nullable=False)
     modified_date = Column(TIMESTAMP(timezone=True))
     modified_by = Column(String)
+    
+class EmailSenderInfor(Base):
+    __tablename__ = 'mailsenderinfo'
+
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    user_id  = Column(Integer, ForeignKey("users.id",ondelete="CASCADE"),nullable=False, unique=True)
+    password_encrypt = Column(String, nullable=False)
+    secret_key = Column(String, nullable=False)     #usingn hash password
+    created_date = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))
+    created_by = Column(String, nullable=False)
+    modified_date = Column(TIMESTAMP(timezone=True))
+    modified_by = Column(String)
+    owner = relationship("User")
+
 

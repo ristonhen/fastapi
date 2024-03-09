@@ -43,6 +43,18 @@ class SentEmailReviewAml(BaseModel):
     
 class SentEmailReviewAmlList(BaseModel):
     email_data: List[SentEmailReviewAml]
+    send_by: Optional[str] = None
+    
+class EmailSenderInfor(BaseModel):
+
+    user_id: int
+    password_encrypt : str
+    secret_key: str
+    created_date: datetime
+    created_by: Optional[str] =None
+    modified_date: Optional[str] =None
+    modified_by: Optional[str] =None
+    
 class DatabaseInfo(BaseModel):
     database_backend: str
 

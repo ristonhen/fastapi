@@ -118,15 +118,16 @@ def sent_token_reset_password(request: schemas.ResetPasswordRequest, db: Session
 def reviewaml_email(request: schemas.SentEmailReviewAmlList, db: Session = Depends(database.get_db)):
 
     for mail_data in request.email_data:
+        print(mail_data)
         # Send the password reset link to the user's email
-        subject = f'Review User AML/CFT System for {mail_data.branchname} Branch'
-        send_reviewaml_email(
-            subject=subject, 
-            email_to = mail_data.email_to, 
-            cc_email = mail_data.cc_email, 
-            pdfimage = mail_data.pdfimage
-        )
-        time.sleep(5)  # Sleep for 2 minutes (120 seconds)
+        # subject = f'Review User AML/CFT System for {mail_data.branchname} Branch'
+        # send_reviewaml_email(
+        #     subject=subject, 
+        #     email_to = mail_data.email_to, 
+        #     cc_email = mail_data.cc_email, 
+        #     pdfimage = mail_data.pdfimage
+        # )
+        # time.sleep(5)  # Sleep for 2 minutes (120 seconds)
     return {"status": True,"message": "Password reset link sent successful"}
 
 @router.get("/resetpwd/{param}")

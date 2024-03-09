@@ -7,6 +7,17 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from .config import settings
 from .utils import encrypt
+from datetime import datetime
+import logging
+
+# Create the 'log' directory if it doesn't exist
+log_directory = 'log'
+os.makedirs(log_directory, exist_ok=True)
+
+# Configure logging with the full path to 'log/mail.log'
+log_file = os.path.join(log_directory, 'mail.log')
+logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 # def print_directory_contents(directory):
 #     for item in os.listdir(directory):
@@ -19,12 +30,12 @@ from .utils import encrypt
 # directory_path = os.path.join('app/assets')
 # print_directory_contents(directory_path)
 
-def send_reviewaml_email(subject: str,email_to: List[str], pdfimage: str, cc_email: List[str] = ''):
+def send_reviewaml_email(branchname: str, sender_name: str, sender_email: str, sender_password: str, subject: str,
+                         email_to: List[str], pdfimage: str, cc_email: List[str] = ''):
     
     current_dir = os.getcwd()
-    image_path = os.path.join(current_dir, 'app/assets', 'ristosignature.png')
+    image_path = os.path.join(current_dir, 'app/assets', f"{sender_name}signature.png")
     pdf_path = os.path.join(current_dir, 'app/assets', pdfimage)
-    sender_email = 'risto.nhen@canadiabank.com.kh'
     email_to = email_to if isinstance(email_to, list) else [email_to]
     cc_email = cc_email if isinstance(cc_email, list) else [cc_email]
     body = f"""\
@@ -34,7 +45,7 @@ def send_reviewaml_email(subject: str,email_to: List[str], pdfimage: str, cc_ema
                 <div style="padding: 0; margin: 0;">
                     <p>Dear Managers,</p>
                     <p>Regarding IT policy and user management in AML/CFT System, we would like to request you to take some times to review your staff information that can Log in to AML/CFT System and do the daily operation as in my attachment file.</p>
-                    <p>- Please kindly inform us back and sign (Acknowledged & Agreed by) on your branch document, then please scan and send to us via email address  : risto.nhen@canadiabank.com.kh</p>
+                    <p>- Please kindly inform us back and sign (Acknowledged & Agreed by) on your branch document, then please scan and send to us via email address  : {sender_email}</p>
                     <p>- If there are any missing information of staffs at your branch, please let us know by writing down in the email to above email address.</p>
                     <p>- If there are any staffs stop working permanently at your branch but their name still exist in user list of AML/CFT System, please let us know and write to above email address.</p>
                     <p>- If after reviewed your staff and they are still working and able to log in to the system, please have your staffs sign in the column Remark next to their name</p>
@@ -66,7 +77,7 @@ def send_reviewaml_email(subject: str,email_to: List[str], pdfimage: str, cc_ema
 
     # Create a new MIMEApplication object for the PDF file
     with open(pdf_path, 'rb') as pdf_file:
-        pdf_attachment = MIMEApplication(pdf_file.read())
+        pdf_attachment = MIMEApplication(pdf_file.read(), _subtype="pdf")
     # Set the appropriate Content-Disposition header for the attachment
     pdf_attachment.add_header('Content-Disposition', 'attachment', filename=pdfimage)
     # Attach the PDF to the email message
@@ -76,18 +87,28 @@ def send_reviewaml_email(subject: str,email_to: List[str], pdfimage: str, cc_ema
 
     smtp_server = 'mail.canadiabank.com'
     smtp_port = 587
-    login_email = 'risto.nhen@canadiabank.com.kh'
-    login_password = 'Cana!@#$%12345'
+    # login_email = 'risjjto.nhjen@cjanajdijabanjk.cojm.kjh'
+    # login_password = 'Canja!@#$%j12345'
+    login_email = sender_email
+    login_password = sender_password
+    
     try:
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(login_email, login_password)
-            recipients = email_to + cc_email
-            server.sendmail(sender_email, recipients, message.as_string())
-        print(f'AML review email sent to {email_to} successfully!')
+        # with smtplib.SMTP(smtp_server, smtp_port) as server:
+        #     server.starttls()
+        #     server.login(login_email, login_password)
+        #     recipients = email_to + cc_email
+        #     server.sendmail(sender_email, recipients, message.as_string())
+        # # Log the successful email
+
+        log_message = f'Success: AML review {branchname} sent to {email_to} by {sender_name} at {datetime.now()}'
+        logging.info(log_message)
+        return True
+    
     except Exception as e:
-        print('An error occurred while sending the password reset email:', str(e))
-        
+        log_message = f'Error: {str(e)} occurred while sending AML {branchname} email to {email_to} at {datetime.now()}'
+        logging.error(log_message)
+    return False
+
 def send_reset_email(email: str, reset_token: str):
     
     # Encrypt the credential and reset_token

@@ -13,19 +13,29 @@ def hash(password: str):
 def verify(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-def encrypt(plaintext: str, key: str) -> str:
+def encrypt(plaintext: str, key: str, length: int) -> str:
+    key = key[:length].ljust(length, '0')  # Ensure key is 32 bytes
     cipher = AES.new(key.encode(), AES.MODE_CBC)
     ciphertext = cipher.encrypt(pad(plaintext.encode(), AES.block_size))
     iv = base64.b64encode(cipher.iv).decode('utf-8')
     encrypted_data = base64.b64encode(ciphertext).decode('utf-8')
     return f"{iv}:{encrypted_data}"
 
+# def decrypt(ciphertext: str, key: str) -> str:
+#     iv, encrypted_data = ciphertext.split(':')
+#     iv = base64.b64decode(iv)
+    
+#     encrypted_data = base64.b64decode(encrypted_data)
+#     cipher = AES.new(key.encode(), AES.MODE_CBC, iv)
+#     decrypted_data = unpad(cipher.decrypt(encrypted_data), AES.block_size)
+#     return decrypted_data.decode('utf-8')
+
 def decrypt(ciphertext: str, key: str) -> str:
     iv, encrypted_data = ciphertext.split(':')
     iv = base64.b64decode(iv)
     
     encrypted_data = base64.b64decode(encrypted_data)
-    cipher = AES.new(key.encode(), AES.MODE_CBC, iv)
+    cipher = AES.new(key[:32].encode('utf-8'), AES.MODE_CBC, iv)
     decrypted_data = unpad(cipher.decrypt(encrypted_data), AES.block_size)
     return decrypted_data.decode('utf-8')
 

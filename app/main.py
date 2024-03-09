@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import models
 # from fastapi.app.routers.dynamicRouter import router
 from .database import engine
-from .routers import post, user,auth , vote, menu, index, branch,role,configuration,dynamicRouter
+from .routers import post, user,auth , vote, menu, index, branch,role,configuration,dynamicRouter, sentmail
 # from typing import List,Optional, Union
 # from datetime import datetime
 
@@ -29,6 +29,7 @@ app.add_middleware(
 )
 
 app.include_router(dynamicRouter.router)
+app.include_router(sentmail.router)
 app.include_router(post.router)
 app.include_router(user.router)
 app.include_router(auth.router)
