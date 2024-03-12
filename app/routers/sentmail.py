@@ -15,6 +15,7 @@ router = APIRouter(
     tags=['SentMail']
 )
 
+
 @router.post("/amlreview/")
 def reviewaml_email(
                     # ids: List[int], 
@@ -26,14 +27,13 @@ def reviewaml_email(
         models.EmailSenderInfor.password_encrypt, 
         models.EmailSenderInfor.secret_key, 
         models.User.email
-    ).join(models.User).filter(models.EmailSenderInfor.user_id == models.User.id).first()
-    
+    ).join(models.User).filter(models.EmailSenderInfor.user_id == current_user.id).first()
+    if not query:
+        return schemas.Response(status=status.HTTP_400_BAD_REQUEST, message= "Don't have mail sender please to create", data={})
     sender_name = current_user.username
     sender_email = query.email
     secret_key = query.secret_key
     password_encrypt =query.password_encrypt
-    sender_password = ""
-    
     sender_password = decrypt(password_encrypt, secret_key)
     
     # existing = db.query(models.EmailData).filter(models.EmailData.id.in_(ids)).all()
@@ -52,7 +52,7 @@ def reviewaml_email(
             pdfimage = mail_data.pdfimage
         )
         time.sleep(5)  # Sleep for 2 minutes (120 seconds)
-    return {"status": True,"message": "AML sent mail to .. successfully"}
+    return {"status": sent,"message": "AML sent mail to .. successfully"}
 
 @router.post("/senderinfor/")
 def createmailSender(request: schemas.EmailSenderInfor, db: Session = Depends(database.get_db),

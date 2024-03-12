@@ -58,6 +58,11 @@ class EmailSenderInfor(BaseModel):
 class DatabaseInfo(BaseModel):
     database_backend: str
 
+class FindFile(BaseModel):
+    refid: List[str]
+    target_folder_path: str
+    target_folder_path: str
+
 class RoleBase(BaseModel):
     # roleid: int
     rolecode:str

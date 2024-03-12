@@ -93,12 +93,12 @@ def send_reviewaml_email(branchname: str, sender_name: str, sender_email: str, s
     login_password = sender_password
     
     try:
-        # with smtplib.SMTP(smtp_server, smtp_port) as server:
-        #     server.starttls()
-        #     server.login(login_email, login_password)
-        #     recipients = email_to + cc_email
-        #     server.sendmail(sender_email, recipients, message.as_string())
-        # # Log the successful email
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(login_email, login_password)
+            recipients = email_to + cc_email
+            server.sendmail(sender_email, recipients, message.as_string())
+        # Log the successful email
 
         log_message = f'Success: AML review {branchname} sent to {email_to} by {sender_name} at {datetime.now()}'
         logging.info(log_message)
